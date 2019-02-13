@@ -418,6 +418,16 @@ func GetEtcdAltNames(cfg *kubeadmapi.InitConfiguration) (*certutil.AltNames, err
 	return altNames, nil
 }
 
+// GetKubeletAltNames builds an AltNames object for generating the kubelet server certificate.
+func GetKubeletAltNames(cfg *kubeadmapi.InitConfiguration) (*certutil.AltNames, error) {
+	altNames := &certutil.AltNames{
+		DNSNames: []string{cfg.NodeRegistration.Name, "localhost"},
+		IPs:      []net.IP{net.IPv4(127, 0, 0, 1), net.IPv6loopback},
+	}
+
+	return altNames, nil
+}
+
 // GetEtcdPeerAltNames builds an AltNames object for generating the etcd peer certificate.
 // Hostname and `API.AdvertiseAddress` are included if the user chooses to promote the single node etcd cluster into a multi-node one (stacked etcd).
 // The user can override the listen address with `Etcd.ExtraArgs` and add SANs with `Etcd.PeerCertSANs`.
