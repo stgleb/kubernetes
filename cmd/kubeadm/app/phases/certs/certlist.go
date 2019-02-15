@@ -209,6 +209,8 @@ func GetDefaultCertList() Certificates {
 		&KubeadmCertRootCA,
 		&KubeadmCertAPIServer,
 		&KubeadmCertKubeletClient,
+		&KubeadmCertKubeletServer,
+
 		// Front Proxy certs
 		&KubeadmCertFrontProxyCA,
 		&KubeadmCertFrontProxyClient,
@@ -227,6 +229,8 @@ func GetCertsWithoutEtcd() Certificates {
 		&KubeadmCertRootCA,
 		&KubeadmCertAPIServer,
 		&KubeadmCertKubeletClient,
+		&KubeadmCertKubeletServer,
+
 		// Front Proxy certs
 		&KubeadmCertFrontProxyCA,
 		&KubeadmCertFrontProxyClient,
@@ -257,6 +261,21 @@ var (
 			makeAltNamesMutator(pkiutil.GetAPIServerAltNames),
 		},
 	}
+	// KubeadmCertKubeletServer is the definition of the cert used to serve the Kubelet API.
+	KubeadmCertKubeletServer = KubeadmCert{
+		Name:     "kubelet",
+		LongName: "certificate for serving the Kubelet API",
+		BaseName: kubeadmconstants.KubeletServerCertAndKeyBaseName,
+		CAName:   "ca",
+		config: certutil.Config{
+			CommonName: kubeadmconstants.KubeletServerCertCommonName,
+			Usages:     []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
+		},
+		configMutators: []configMutatorsFunc{
+			makeAltNamesMutator(pkiutil.GetKubeletAltNames),
+		},
+	}
+
 	// KubeadmCertKubeletClient is the definition of the cert used by the API server to access the kubelet.
 	KubeadmCertKubeletClient = KubeadmCert{
 		Name:     "apiserver-kubelet-client",
